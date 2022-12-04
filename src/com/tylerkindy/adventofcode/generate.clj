@@ -42,12 +42,9 @@
        (map #(render-template %1 bindings))
        (into {})))
 
-(defn -main [day parsed-name part1-name example-answer]
+(defn generate [{:keys [day] :as args}]
   (let [day (pad-day day)
-        bindings {:day day
-                  :parsed-name parsed-name
-                  :part1-name part1-name
-                  :example-answer example-answer}
+        bindings (assoc args :day day)
         files (render-templates bindings)]
     (doseq [[path file] files]
       (spit path file))))
