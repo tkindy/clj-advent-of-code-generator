@@ -3,11 +3,10 @@
             [clojure.string :as str]))
 
 (defn pad-day [day]
-  (let [day (parse-long day)]
-    (cond
-      (<= day 0) (throw (RuntimeException. "Invalid day"))
-      (< day 10) (str "0" day)
-      :else (str day))))
+  (cond
+    (<= day 0) (throw (RuntimeException. "Invalid day"))
+    (< day 10) (str "0" day)
+    :else (str day)))
 
 (defn find-templates []
   (->> (io/file "template")
