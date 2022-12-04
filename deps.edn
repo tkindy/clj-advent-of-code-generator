@@ -1,2 +1,3 @@
-{:tools/usage
+{:paths ["src" "resources"]
+ :tools/usage
  {:ns-default com.tylerkindy.adventofcode.generate}}

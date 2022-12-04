@@ -9,36 +9,32 @@
     (< day 10) (str "0" day)
     :else (str day)))
 
-(defn find-templates []
-  (->> (io/file "template")
-       file-seq
-       (filter #(str/ends-with? (.getPath %1) "clj"))))
-
-(defn build-path [file {:keys [day]}]
-  (-> (.getPath file)
-      (str/replace "template/" "")
-      (str/replace "XX" day)))
+(defn build-path [{:keys [path]} {:keys [day]}]
+  (str/replace path "XX" day))
 
 (defn replace-binding [template [key value]]
   (str/replace template
                (str "TEMP_" (name key))
-               value))
+               (str value)))
 
 (defn replace-bindings [template bindings]
   (reduce replace-binding template bindings))
 
-(defn do-render [file {:keys [day] :as bindings}]
-  (-> file
+(defn do-render [{:keys [resource]} {:keys [day] :as bindings}]
+  (-> (io/resource resource)
       slurp
       (str/replace "XX" day)
       (replace-bindings bindings)))
 
-(defn render-template [file bindings]
-  [(build-path file bindings)
-   (do-render file bindings)])
+(defn render-template [template bindings]
+  [(build-path template bindings)
+   (do-render template bindings)])
+
+(def templates [{:path "src/dayXX.clj" :resource "template/src.clj"}
+                {:path "test/dayXX_test.clj" :resource "template/test.clj"}])
 
 (defn render-templates [bindings]
-  (->> (find-templates)
+  (->> templates
        (map #(render-template %1 bindings))
        (into {})))
 
