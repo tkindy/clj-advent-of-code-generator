@@ -1,6 +1,7 @@
 (ns com.tylerkindy.adventofcode.generate
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.set :as set]))
 
 (defn pad-day [day]
   (cond
@@ -41,7 +42,19 @@
        (map #(render-template %1 bindings))
        (into {})))
 
+(def required-args #{:day
+                     :parsed-name
+                     :part1-name
+                     :example-answer})
+
+(defn valid-args? [args]
+  (set/subset? required-args
+               (set (keys args))))
+
 (defn generate [{:keys [day] :as args}]
+  (when (not (valid-args? args))
+    (throw (RuntimeException. (str "Required args: " required-args))))
+
   (let [day (pad-day day)
         bindings (assoc args :day day)
         files (render-templates bindings)]
